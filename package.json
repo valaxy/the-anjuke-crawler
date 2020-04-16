@@ -1,0 +1,28 @@
+{
+  "name": "the-anjuke-crawler",
+  "version": "1.0.0",
+  "description": "包括安居客爬虫的相关代码",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valaxy/the-anjuke-crawler.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valaxy/the-anjuke-crawler/issues"
+  },
+  "homepage": "https://github.com/valaxy/the-anjuke-crawler#readme",
+  "dependencies": {
+    "@types/fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.0",
+    "reflect-metadata": "^0.1.13",
+    "sequelize": "^5.21.5",
+    "sequelize-typescript": "^1.1.0",
+    "sqlite3": "^4.1.1",
+    "typescript": "^3.8.3"
+  }
+}
