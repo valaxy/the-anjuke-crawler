@@ -1,4 +1,5 @@
-import { Table, Column, Model, PrimaryKey, AutoIncrement, AllowNull, Unique, NotNull } from 'sequelize-typescript'
+import { Table, Column, Model, PrimaryKey, AutoIncrement, AllowNull, Unique, Default } from 'sequelize-typescript'
+import Sequelize from 'sequelize'
 
 /**
  * 安居客抓取任务
@@ -32,8 +33,9 @@ export class AjkCrawlTask extends Model {
     @AllowNull(false)
     @Column
     type
-        : 'communityList'   // 处理小区列表的任务
-        | 'communityView'   // 处理小区详情的任务
+        : 'communityListHome'   // 小区列表首页，由这个任务派生communityList任务
+        | 'communityList'       // 处理小区列表的任务
+        | 'communityView'       // 处理小区详情的任务
 
     /**
      * 请求URL
@@ -56,6 +58,7 @@ export class AjkCrawlTask extends Model {
      * 数据行创建时间
      */
     @AllowNull(false)
+    @Default(Sequelize.literal('CURRENT_TIMESTAMP'))
     @Column
     create_time: Date
 
@@ -64,6 +67,7 @@ export class AjkCrawlTask extends Model {
      * 数据行更新时间
      */
     @AllowNull(false)
+    @Default(Sequelize.literal('CURRENT_TIMESTAMP')) // 好吧，sqlite3不支持ON UPDATE CURRENT_TIMESTAMP
     @Column
     update_time: Date
 }

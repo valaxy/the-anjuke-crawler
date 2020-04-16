@@ -1,4 +1,5 @@
 /**
+ * 【入口文件】
  * 执行后构建数据库
  */
 import { sequelize } from '../db'
