@@ -13,7 +13,7 @@ export class CommunityViewCrawl implements Crawl {
     }
 
     async process(task: AjkCrawlTask) {
-        let $ = await this._q.tryCrawlHtml(task)
+        let $ = await this._q.tryCrawlHtml(task, { save: false })
 
         let community = new AjkCommunity()
         community.ajkId = this._getId(task.requestUrl)
@@ -21,6 +21,7 @@ export class CommunityViewCrawl implements Crawl {
         this._initFields(community, $)
         logger.info(community.toJSON())
 
+        await task.save()
         // let averagePrice = $('.contain-mod .comm-basic-mod .average').text()
     }
 

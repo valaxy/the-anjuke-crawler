@@ -1,5 +1,5 @@
 import async from 'async'
-import request = require('request-promise')
+import requestP = require('request-promise')
 import { AjkCrawlTask } from '../entity/AjkCrawlTask'
 import { getLogger } from '../log'
 import { Crawl } from './Crawl'
@@ -8,6 +8,14 @@ import { setting } from '../setting'
 import cheerio = require('cheerio')
 import { CommunityListCrawl } from './CommunityListCrawl'
 import { CommunityViewCrawl } from './CommunityViewCrawl'
+import { randomWait } from '../utils/utils'
+
+const request = requestP
+
+// const request = requestP.defaults({
+//     proxy: "http://106.5.122.132:4235",
+//     rejectUnauthorized: false,
+// })
 
 
 export class TaskQueue {
@@ -44,13 +52,17 @@ export class TaskQueue {
 
     async request(opts: { url: string }) {
         logger.info(`request url: ${opts.url}`)
-        let res = await request({
+        let body = await request({
             url: opts.url,
             method: 'get',
             headers: setting.crawlRequest.headers
         })
-        await this._wait()
-        return res
+        if (body.match(/访问验证/)) {
+            throw new Error('hit 反爬虫策略')
+        }
+
+        await randomWait(5000)
+        return body
     }
 
 
@@ -80,7 +92,9 @@ export class TaskQueue {
     }
 
 
-    async tryCrawlHtml(task: AjkCrawlTask): Promise<CheerioStatic> {
+    async tryCrawlHtml(task: AjkCrawlTask, {
+        save = true
+    } = {}): Promise<CheerioStatic> {
         if (task.status == 'created') {
             let res = await this.request({ url: task.requestUrl })
             let $ = cheerio.load(res)
@@ -88,7 +102,10 @@ export class TaskQueue {
             task.responseHtml = res
             task.status = 'crawled'
             task.updateTime = new Date
-            await task.save()
+
+            if (save) {
+                await task.save()
+            }
 
             return $
         } else {
@@ -105,14 +122,6 @@ export class TaskQueue {
         }
 
         throw new Error(`can not find crawl with task.type=${task.type}`)
-    }
-
-    private _wait(ms = 1000) {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve()
-            }, ms)
-        })
     }
 }
 

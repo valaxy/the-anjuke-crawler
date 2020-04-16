@@ -45,12 +45,11 @@ export class CommunityListCrawl implements Crawl {
                         requestUrl: href,
                     }, null)
                 }
-
-                task.status = 'parsed'
-                task.updateTime = new Date
-                await task.save()
-
             }
+
+            task.status = 'parsed'
+            task.updateTime = new Date
+            await task.save()
         }
     }
 }
