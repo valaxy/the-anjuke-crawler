@@ -43,7 +43,7 @@ export class AjkCrawlTask extends Model {
     @Unique({ name: 'unique_request', msg: '' })
     @AllowNull(false)
     @Column
-    request_url: string
+    requestUrl: string
 
 
     /**
@@ -51,7 +51,7 @@ export class AjkCrawlTask extends Model {
      */
     @AllowNull
     @Column
-    response_html: string
+    responseHtml: string
 
 
     /**
@@ -60,7 +60,7 @@ export class AjkCrawlTask extends Model {
     @AllowNull(false)
     @Default(Sequelize.literal('CURRENT_TIMESTAMP'))
     @Column
-    create_time: Date
+    createTime: Date
 
 
     /**
@@ -69,7 +69,7 @@ export class AjkCrawlTask extends Model {
     @AllowNull(false)
     @Default(Sequelize.literal('CURRENT_TIMESTAMP')) // 好吧，sqlite3不支持ON UPDATE CURRENT_TIMESTAMP
     @Column
-    update_time: Date
+    updateTime: Date
 }
 
 

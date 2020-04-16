@@ -11,7 +11,7 @@ const sequelize = new Sequelize({
         acquire: 30000,
         idle: 10000
     },
-    storage: setting.databaseFilePath
+    storage: setting.databaseFilePath,
 })
 
 sequelize.addModels([

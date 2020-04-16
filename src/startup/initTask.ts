@@ -8,8 +8,8 @@ import { AjkCrawlTask } from '../AjkCrawlTask'
 const main = async function () {
     let task = new AjkCrawlTask()
     task.status = 'created'
-    task.type = 'communityList'
-    task.request_url = 'https://cs.anjuke.com/community/'
+    task.type = 'communityListHome'
+    task.requestUrl = 'https://cs.anjuke.com/community/o5/o5/'
     await task.save()
     sequelize.close()
 }
