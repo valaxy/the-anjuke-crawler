@@ -1,10 +1,13 @@
 import async from 'async'
 import request = require('request-promise')
-import { AjkCrawlTask } from '../AjkCrawlTask'
-import { getLogger } from 'log4js'
+import { AjkCrawlTask } from '../entity/AjkCrawlTask'
+import { getLogger } from '../log'
 import { Crawl } from './Crawl'
 import { CommunityListHomeCrawl } from './CommunityListHomeCrawl'
 import { setting } from '../setting'
+import cheerio = require('cheerio')
+import { CommunityListCrawl } from './CommunityListCrawl'
+import { CommunityViewCrawl } from './CommunityViewCrawl'
 
 
 export class TaskQueue {
@@ -23,7 +26,9 @@ export class TaskQueue {
         }, 1)
 
         this._crawls = [
-            new CommunityListHomeCrawl(this)
+            new CommunityListHomeCrawl(this),
+            new CommunityListCrawl(this),
+            new CommunityViewCrawl(this),
         ]
     }
 
@@ -38,11 +43,14 @@ export class TaskQueue {
     }
 
     async request(opts: { url: string }) {
-        return await request({
+        logger.info(`request url: ${opts.url}`)
+        let res = await request({
             url: opts.url,
             method: 'get',
             headers: setting.crawlRequest.headers
         })
+        await this._wait()
+        return res
     }
 
 
@@ -72,6 +80,21 @@ export class TaskQueue {
     }
 
 
+    async tryCrawlHtml(task: AjkCrawlTask): Promise<CheerioStatic> {
+        if (task.status == 'created') {
+            let res = await this.request({ url: task.requestUrl })
+            let $ = cheerio.load(res)
+
+            task.responseHtml = res
+            task.status = 'crawled'
+            task.updateTime = new Date
+            await task.save()
+
+            return $
+        } else {
+            return cheerio.load(task.responseHtml)
+        }
+    }
 
 
     private _findCrawl(task: AjkCrawlTask) {
@@ -82,6 +105,14 @@ export class TaskQueue {
         }
 
         throw new Error(`can not find crawl with task.type=${task.type}`)
+    }
+
+    private _wait(ms = 1000) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve()
+            }, ms)
+        })
     }
 }
 

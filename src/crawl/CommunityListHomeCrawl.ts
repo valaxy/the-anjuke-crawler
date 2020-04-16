@@ -1,4 +1,4 @@
-import { AjkCrawlTask } from "../AjkCrawlTask"
+import { AjkCrawlTask } from "../entity/AjkCrawlTask"
 import { Crawl } from "./Crawl"
 import cheerio = require('cheerio')
 import { TaskQueue } from "./TaskQueue"

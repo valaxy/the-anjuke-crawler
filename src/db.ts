@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize-typescript'
-import { AjkCrawlTask } from './AjkCrawlTask'
+import { AjkCrawlTask } from './entity/AjkCrawlTask'
 import { setting } from './setting'
+import { AjkCommunity } from './entity/AjkCommunity'
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
@@ -15,7 +16,8 @@ const sequelize = new Sequelize({
 })
 
 sequelize.addModels([
-    AjkCrawlTask
+    AjkCrawlTask,
+    AjkCommunity,
 ])
 
 export { sequelize }

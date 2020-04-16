@@ -1,4 +1,4 @@
-import { AjkCrawlTask } from "../AjkCrawlTask"
+import { AjkCrawlTask } from "../entity/AjkCrawlTask"
 
 export interface Crawl {
     recognize(task: AjkCrawlTask): boolean

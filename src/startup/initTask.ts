@@ -3,7 +3,7 @@
  * 初始化任务
  */
 import { sequelize } from '../db'
-import { AjkCrawlTask } from '../AjkCrawlTask'
+import { AjkCrawlTask } from '../entity/AjkCrawlTask'
 
 const main = async function () {
     let task = new AjkCrawlTask()
