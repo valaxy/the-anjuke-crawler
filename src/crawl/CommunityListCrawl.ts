@@ -40,6 +40,9 @@ export class CommunityListCrawl implements Crawl {
 
                 // 生成详情任务
                 for (let href of hrefs) {
+                    // 有时候会抓到0不知道啥情况
+                    if (href.match(/\/view\/0\//)) { continue }
+
                     await this._q.tryGenerateTask({
                         type: 'communityView',
                         requestUrl: href,

@@ -32,7 +32,7 @@ export class CommunityListHomeCrawl implements Crawl {
             }).toArray() as any
 
             hrefs = hrefs.filter((href) => {
-                let match = href.match(/https:\/\/cs.anjuke.com\/community\/([\w]+)\/o5\//)
+                let match = href.match(/https:\/\/\w+\.anjuke\.com\/community\/([\w]+)\/o5\//)
                 return match && match[1] != 'o5'
             })
 
