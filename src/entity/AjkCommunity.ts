@@ -28,6 +28,9 @@ export class AjkCommunity extends Model<AjkCommunity> {
     @Column
     averagePrice: number
 
+    /**
+     * 房屋类型
+     */
     @AllowNull
     @Column
     houseType: string
@@ -47,6 +50,14 @@ export class AjkCommunity extends Model<AjkCommunity> {
     @AllowNull
     @Column
     buildYear: number
+
+
+    /**
+     * 位置
+     */
+    @AllowNull
+    @Column
+    location: string
 
 
     /**

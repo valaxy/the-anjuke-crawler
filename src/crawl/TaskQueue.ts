@@ -57,11 +57,11 @@ export class TaskQueue {
             method: 'get',
             headers: setting.crawlRequest.headers
         })
-        if (body.match(/访问验证/)) {
+        if (body.match(/访问验证/) | body.match(/登录/)) {
             throw new Error('hit 反爬虫策略')
         }
 
-        await randomWait(5000)
+        await randomWait(6000)
         return body
     }
 

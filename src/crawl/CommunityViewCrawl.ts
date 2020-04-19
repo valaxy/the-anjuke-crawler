@@ -4,6 +4,8 @@ import { TaskQueue } from "./TaskQueue"
 import * as assert from 'assert'
 import { AjkCommunity } from "../entity/AjkCommunity"
 import { getLogger } from '../log'
+import { sequelize } from "../db"
+import cheerio = require('cheerio')
 
 export class CommunityViewCrawl implements Crawl {
     constructor(private _q: TaskQueue) { }
@@ -13,15 +15,31 @@ export class CommunityViewCrawl implements Crawl {
     }
 
     async process(task: AjkCrawlTask) {
-        let $ = await this._q.tryCrawlHtml(task, { save: false })
+        if (task.status == 'created') {
+            let $ = await this._q.tryCrawlHtml(task, { save: false })
+            let name = this._getName($)
+            logger.info(name)
+            await task.save()
+        } else if (task.status == 'crawled') {
+            let $ = cheerio.load(task.responseHtml)
 
-        let community = new AjkCommunity()
-        community.ajkId = this._getId(task.requestUrl)
-        community.name = this._getName($)
-        this._initFields(community, $)
-        logger.info(community.toJSON())
+            await sequelize.transaction(async (t) => {
+                let community = new AjkCommunity()
+                community.ajkId = this._getId(task.requestUrl)
+                console.log(task.requestUrl)
+                community.name = this._getName($)
+                community.location = this._getLocation($)
+                this._initFields(community, $)
+                logger.info(community.toJSON())
 
-        await task.save()
+                task.status = 'parsed'
+
+                await community.save({ transaction: t })
+                await task.save({ transaction: t })
+            })
+        }
+
+
         // let averagePrice = $('.contain-mod .comm-basic-mod .average').text()
     }
 
@@ -39,6 +57,16 @@ export class CommunityViewCrawl implements Crawl {
         let name = $('.p_crumbs a:last-child').text().trim()
         assert(!!name)
         return name
+    }
+
+
+    private _getLocation($: CheerioStatic) {
+        let href = $('.comm-title .map-link').attr('href').trim()
+        let match = href.match(/#l1=(.*?)\&l2=(.*?)\&/)
+        return [
+            parseFloat(match[2]),
+            parseFloat(match[1]),
+        ].join(',')
     }
 
 
